@@ -10,8 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
@@ -34,10 +32,13 @@ import com.haibin.calendarviewproject.range.RangeActivity;
 import com.haibin.calendarviewproject.simple.SimpleActivity;
 import com.haibin.calendarviewproject.single.SingleActivity;
 import com.haibin.calendarviewproject.solay.SolarActivity;
+import com.haibin.calendarviewproject.travel.TravelActivity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends BaseActivity implements
         CalendarView.OnCalendarSelectListener,
@@ -285,6 +286,7 @@ public class MainActivity extends BaseActivity implements
         findViewById(R.id.ll_vertical).setOnClickListener(this);
         findViewById(R.id.ll_simple_mark).setOnClickListener(this);
         findViewById(R.id.ll_simple_mark2).setOnClickListener(this);
+        findViewById(R.id.ll_travel).setOnClickListener(this);
     }
 
     @Override
@@ -374,6 +376,9 @@ public class MainActivity extends BaseActivity implements
                 break;
             case R.id.ll_simple_mark2:
                 SimpleMarkActivity2.show(this);
+                break;
+            case R.id.ll_travel:
+                TravelActivity.show(this);
                 break;
         }
     }

@@ -77,6 +77,10 @@
         <activity
             android:name=".mark.SimpleMarkActivity2"
             android:exported="true" />
+
+        <activity
+            android:name=".travel.TravelActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

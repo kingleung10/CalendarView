@@ -192,6 +192,44 @@
                 tools:ignore="KeyboardInaccessibleWidget">
 
                 <LinearLayout
+                    android:id="@+id/ll_travel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="39dp"
+                        android:layout_margin="16dp"
+                        android:contentDescription="travel"
+                        android:src="@mipmap/ic_flyme_logo" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="317dp"
+                            android:layout_height="wrap_content"
+                            android:text="旅行月历"
+                            android:textColor="#333333"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="301dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="旅行月历"
+                            android:textColor="#666666"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/ll_flyme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
