@@ -26,16 +26,16 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * 日历布局
@@ -1724,6 +1724,10 @@ public class CalendarView extends FrameLayout {
      * @return 获得月视图
      */
     public MonthViewPager getMonthViewPager() {
+        return mMonthPager;
+    }
+
+    public View getMonthView() {
         return mMonthPager;
     }
 

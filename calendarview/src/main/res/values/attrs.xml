@@ -29,6 +29,9 @@
         <attr name="scheme_lunar_text_color" format="color" />
         <attr name="scheme_theme_color" format="color" />
 
+        <attr name="month_extra_height" format="dimension" />
+        <attr name="month_view_fixed_height" format="dimension" />
+
         <attr name="selected_theme_color" format="color" />
         <attr name="selected_text_color" format="color" />
         <attr name="selected_lunar_text_color" format="color" />

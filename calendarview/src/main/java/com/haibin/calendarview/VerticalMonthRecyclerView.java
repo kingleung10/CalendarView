@@ -5,16 +5,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 垂直列表排列月视图
@@ -265,11 +264,6 @@ public class VerticalMonthRecyclerView extends RecyclerView {
             viewHolder.monthView.setTag(position);
             viewHolder.monthView.initMonthWithDate(year, month);
             viewHolder.monthView.setSelectedCalendar(mDelegate.mSelectedCalendar);
-
-            TextView currentMonthView = viewHolder.itemView.findViewById(R.id.current_month_view);
-            if (currentMonthView != null) {
-                currentMonthView.setText(year + "年" + month + "月");
-            }
 
             CalendarView.OnVerticalItemInitializeListener verticalItemInitializeListener = mDelegate.mVerticalItemInitializeListener;
             if (verticalItemInitializeListener != null) {

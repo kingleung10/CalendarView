@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.haibin.calendarview.BaseMonthView;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
@@ -103,82 +104,66 @@ public class TravelActivity extends BaseActivity implements
         mTextMonthDay.setText(mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "日");
         mTextLunar.setText("今日");
         mTextCurrentDay.setText(String.valueOf(mCalendarView.getCurDay()));
+
+        mCalendarView.setOnVerticalItemInitialize((viewHolder, position, year, month) -> {
+            View itemView = viewHolder.itemView;
+            BaseMonthView monthView = viewHolder.monthView;
+
+            TextView currentMonthView = viewHolder.itemView.findViewById(com.haibin.calendarview.R.id.current_month_view);
+            if (currentMonthView != null) {
+                currentMonthView.setText(year + "年" + month + "月");
+            }
+        });
+
+        mCalendarView.setRange(2020, 1, 1,
+
+                mCalendarView.getCurYear() + 1, mCalendarView.getCurMonth(), mCalendarView.getCurDay()
+
+        );
+
+        mCalendarView.scrollToCurrent();
     }
 
     @Override
     protected void initData() {
-        final int year = mCalendarView.getCurYear();
-        final int month = mCalendarView.getCurMonth();
 
+        int year = mCalendarView.getCurYear();
+        int month = mCalendarView.getCurMonth();
         Map<String, Calendar> map = new HashMap<>();
-        for (int y = 1997; y < 2082; y++) {
-            for (int m = 1; m <= 12; m++) {
-
-                map.put(getSchemeCalendar(y, m, 1, 0xFF40db25, "假").toString(),
-                        getSchemeCalendar(y, m, 1, 0xFF40db25, "假"));
-
-                map.put(getSchemeCalendar(y, m, 2, 0xFFe69138, "游").toString(),
-                        getSchemeCalendar(y, m, 2, 0xFFe69138, "游"));
-                map.put(getSchemeCalendar(y, m, 3, 0xFFdf1356, "事").toString(),
-                        getSchemeCalendar(y, m, 3, 0xFFdf1356, "事"));
-                map.put(getSchemeCalendar(y, m, 4, 0xFFaacc44, "车").toString(),
-                        getSchemeCalendar(y, m, 4, 0xFFaacc44, "车"));
-                map.put(getSchemeCalendar(y, m, 5, 0xFFbc13f0, "驾").toString(),
-                        getSchemeCalendar(y, m, 5, 0xFFbc13f0, "驾"));
-                map.put(getSchemeCalendar(y, m, 6, 0xFF542261, "记").toString(),
-                        getSchemeCalendar(y, m, 6, 0xFF542261, "记"));
-                map.put(getSchemeCalendar(y, m, 7, 0xFF4a4bd2, "会").toString(),
-                        getSchemeCalendar(y, m, 7, 0xFF4a4bd2, "会"));
-                map.put(getSchemeCalendar(y, m, 8, 0xFFe69138, "车").toString(),
-                        getSchemeCalendar(y, m, 8, 0xFFe69138, "车"));
-                map.put(getSchemeCalendar(y, m, 9, 0xFF542261, "考").toString(),
-                        getSchemeCalendar(y, m, 9, 0xFF542261, "考"));
-                map.put(getSchemeCalendar(y, m, 10, 0xFF87af5a, "记").toString(),
-                        getSchemeCalendar(y, m, 10, 0xFF87af5a, "记"));
-                map.put(getSchemeCalendar(y, m, 11, 0xFF40db25, "会").toString(),
-                        getSchemeCalendar(y, m, 11, 0xFF40db25, "会"));
-                map.put(getSchemeCalendar(y, m, 12, 0xFFcda1af, "游").toString(),
-                        getSchemeCalendar(y, m, 12, 0xFFcda1af, "游"));
-                map.put(getSchemeCalendar(y, m, 13, 0xFF95af1a, "事").toString(),
-                        getSchemeCalendar(y, m, 13, 0xFF95af1a, "事"));
-                map.put(getSchemeCalendar(y, m, 14, 0xFF33aadd, "学").toString(),
-                        getSchemeCalendar(y, m, 14, 0xFF33aadd, "学"));
-                map.put(getSchemeCalendar(y, m, 15, 0xFF1aff1a, "码").toString(),
-                        getSchemeCalendar(y, m, 15, 0xFF1aff1a, "码"));
-                map.put(getSchemeCalendar(y, m, 16, 0xFF22acaf, "驾").toString(),
-                        getSchemeCalendar(y, m, 16, 0xFF22acaf, "驾"));
-                map.put(getSchemeCalendar(y, m, 17, 0xFF99a6fa, "校").toString(),
-                        getSchemeCalendar(y, m, 17, 0xFF99a6fa, "校"));
-                map.put(getSchemeCalendar(y, m, 18, 0xFFe69138, "车").toString(),
-                        getSchemeCalendar(y, m, 18, 0xFFe69138, "车"));
-                map.put(getSchemeCalendar(y, m, 19, 0xFF40db25, "码").toString(),
-                        getSchemeCalendar(y, m, 19, 0xFF40db25, "码"));
-                map.put(getSchemeCalendar(y, m, 20, 0xFFe69138, "火").toString(),
-                        getSchemeCalendar(y, m, 20, 0xFFe69138, "火"));
-                map.put(getSchemeCalendar(y, m, 21, 0xFF40db25, "假").toString(),
-                        getSchemeCalendar(y, m, 21, 0xFF40db25, "假"));
-                map.put(getSchemeCalendar(y, m, 22, 0xFF99a6fa, "记").toString(),
-                        getSchemeCalendar(y, m, 22, 0xFF99a6fa, "记"));
-                map.put(getSchemeCalendar(y, m, 23, 0xFF33aadd, "假").toString(),
-                        getSchemeCalendar(y, m, 23, 0xFF33aadd, "假"));
-                map.put(getSchemeCalendar(y, m, 24, 0xFF40db25, "校").toString(),
-                        getSchemeCalendar(y, m, 24, 0xFF40db25, "校"));
-                map.put(getSchemeCalendar(y, m, 25, 0xFF1aff1a, "假").toString(),
-                        getSchemeCalendar(y, m, 25, 0xFF1aff1a, "假"));
-                map.put(getSchemeCalendar(y, m, 26, 0xFF40db25, "议").toString(),
-                        getSchemeCalendar(y, m, 26, 0xFF40db25, "议"));
-                map.put(getSchemeCalendar(y, m, 27, 0xFF95af1a, "假").toString(),
-                        getSchemeCalendar(y, m, 27, 0xFF95af1a, "假"));
-                map.put(getSchemeCalendar(y, m, 28, 0xFF40db25, "码").toString(),
-                        getSchemeCalendar(y, m, 28, 0xFF40db25, "码"));
-            }
-        }
-
-        //28560 数据量增长不会影响UI响应速度，请使用这个API替换
+        map.put(getSchemeCalendar(year, month, 3, 0xFF40db25, "假").toString(),
+                getSchemeCalendar(year, month, 3, 0xFF40db25, "假"));
+        map.put(getSchemeCalendar(year, month, 6, 0xFFe69138, "事").toString(),
+                getSchemeCalendar(year, month, 6, 0xFFe69138, "事"));
+        map.put(getSchemeCalendar(year, month, 9, 0xFFdf1356, "议").toString(),
+                getSchemeCalendar(year, month, 9, 0xFFdf1356, "议"));
+        map.put(getSchemeCalendar(year, month, 13, 0xFFedc56d, "记").toString(),
+                getSchemeCalendar(year, month, 13, 0xFFedc56d, "记"));
+        map.put(getSchemeCalendar(year, month, 14, 0xFFedc56d, "记").toString(),
+                getSchemeCalendar(year, month, 14, 0xFFedc56d, "记"));
+        map.put(getSchemeCalendar(year, month, 15, 0xFFaacc44, "假").toString(),
+                getSchemeCalendar(year, month, 15, 0xFFaacc44, "假"));
+        map.put(getSchemeCalendar(year, month, 18, 0xFFbc13f0, "记").toString(),
+                getSchemeCalendar(year, month, 18, 0xFFbc13f0, "记"));
+        map.put(getSchemeCalendar(year, month, 25, 0xFF13acf0, "假").toString(),
+                getSchemeCalendar(year, month, 25, 0xFF13acf0, "假"));
+        map.put(getSchemeCalendar(year, month, 27, 0xFF13acf0, "多").toString(),
+                getSchemeCalendar(year, month, 27, 0xFF13acf0, "多"));
+        //此方法在巨大的数据量上不影响遍历性能，推荐使用
         mCalendarView.setSchemeDate(map);
 
-        //可自行测试性能差距
-        //mCalendarView.setSchemeDate(schemes);
+    }
+
+    private Calendar getSchemeCalendar(int year, int month, int day, int color, String text) {
+        Calendar calendar = new Calendar();
+        calendar.setYear(year);
+        calendar.setMonth(month);
+        calendar.setDay(day);
+        calendar.setSchemeColor(color);//如果单独标记颜色、则会使用这个颜色
+        calendar.setScheme(text);
+        calendar.addScheme(new Calendar.Scheme());
+        calendar.addScheme(0xFF008800, "假");
+        calendar.addScheme(0xFF008800, "节");
+        return calendar;
     }
 
     @Override
@@ -236,13 +221,4 @@ public class TravelActivity extends BaseActivity implements
 
     }
 
-    private Calendar getSchemeCalendar(int year, int month, int day, int color, String text) {
-        Calendar calendar = new Calendar();
-        calendar.setYear(year);
-        calendar.setMonth(month);
-        calendar.setDay(day);
-        calendar.setSchemeColor(color);//如果单独标记颜色、则会使用这个颜色
-        calendar.setScheme(text);
-        return calendar;
-    }
 }

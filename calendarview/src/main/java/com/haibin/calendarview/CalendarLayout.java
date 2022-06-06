@@ -96,7 +96,7 @@ public class CalendarLayout extends LinearLayout {
     /**
      * 自定义ViewPager，月视图
      */
-    MonthViewPager mMonthView;
+    View mMonthView;
 
     /**
      * 日历
@@ -214,6 +214,10 @@ public class CalendarLayout extends LinearLayout {
         mViewPagerTranslateY = (line - 1) * mItemHeight;
     }
 
+    final void updateSelectY(int y) {
+        mViewPagerTranslateY = y;
+    }
+
     /**
      * 设置选中的周，更新位置
      *
@@ -232,9 +236,15 @@ public class CalendarLayout extends LinearLayout {
         if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH) {
             mContentViewTranslateY = 5 * mItemHeight;
         } else {
-            mContentViewTranslateY = CalendarUtil.calcMonthViewHeight(calendar.getYear(),
-                    calendar.getMonth(), mItemHeight, mDelegate)
-                    - mItemHeight;
+            // 高度固定模式的monthview高度
+            if (mDelegate.getMonthViewFixedHeight() > 0) {
+                mContentViewTranslateY = mDelegate.getMonthViewFixedHeight()- mItemHeight;
+            }
+            else {
+                mContentViewTranslateY = CalendarUtil.calcMonthViewHeight(calendar.getYear(),
+                        calendar.getMonth(), mItemHeight, mDelegate)
+                        - mItemHeight;
+            }
         }
         //已经显示周视图，则需要动态平移contentView的高度
         if (mWeekPager.getVisibility() == VISIBLE) {
@@ -256,8 +266,14 @@ public class CalendarLayout extends LinearLayout {
         if (mDelegate.getMonthViewShowMode() == CalendarViewDelegate.MODE_ALL_MONTH) {
             mContentViewTranslateY = 5 * mItemHeight;
         } else {
-            mContentViewTranslateY = CalendarUtil.calcMonthViewHeight(calendar.getYear(), calendar.getMonth(),
-                    mItemHeight, mDelegate) - mItemHeight;
+            // 高度固定模式的monthview高度
+            if (mDelegate.getMonthViewFixedHeight() > 0) {
+                mContentViewTranslateY = mDelegate.getMonthViewFixedHeight()- mItemHeight;
+            }
+            else {
+                mContentViewTranslateY = CalendarUtil.calcMonthViewHeight(calendar.getYear(), calendar.getMonth(),
+                        mItemHeight, mDelegate) - mItemHeight;
+            }
         }
         translationViewPager();
         if (mWeekPager.getVisibility() == VISIBLE) {
@@ -475,8 +491,8 @@ public class CalendarLayout extends LinearLayout {
         float y = ev.getY();
         float x = ev.getX();
 
-        MonthViewPager monthViewPager = mCalendarView.getMonthViewPager();
-        if (monthViewPager.getOrientation() == LinearLayout.VERTICAL && !isWeekView) {
+        View monthViewPager = mCalendarView.getMonthView();
+        if ( !isWeekView) {
             if (x >= monthViewPager.getLeft() && x <= monthViewPager.getRight() &&
                     y >= monthViewPager.getTop() && y <= monthViewPager.getBottom()) {
                 return super.onInterceptTouchEvent(ev);

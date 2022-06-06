@@ -21,8 +21,6 @@ import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-import androidx.annotation.Nullable;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +28,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.Nullable;
 
 /**
  * Google规范化的属性委托,
@@ -196,6 +196,15 @@ public class CalendarViewDelegate {
     private int mYearViewMonthHeight,
             mYearViewWeekHeight;
 
+    /**
+     * monthview 额外内容的高度
+     */
+    protected int mMonthExtraHeight;
+
+    /**
+     * monthview 固定模式的高度（垂直滚动模式，分页不用考虑）
+     */
+    protected int mMonthViewFixedHeight;
 
     /**
      * 年视图字体和标记颜色
@@ -443,7 +452,7 @@ public class CalendarViewDelegate {
     /**
      * 月份资源文本id
      */
-    public int monthStringResId = R.array.week_string_array;
+    public int monthStringResId = R.array.month_string_array;
 
     /**
      * 预览的日期, 格式必须是yyyyMMdd.
@@ -576,6 +585,11 @@ public class CalendarViewDelegate {
                 CalendarUtil.dipToPx(context, 4));
         mYearViewMonthPaddingRight = (int) array.getDimension(R.styleable.CalendarView_year_view_month_padding_right,
                 CalendarUtil.dipToPx(context, 4));
+
+        mMonthExtraHeight = (int) array.getDimension(R.styleable.CalendarView_month_extra_height,
+                CalendarUtil.dipToPx(context, 0));
+        mMonthViewFixedHeight = (int) array.getDimension(R.styleable.CalendarView_month_view_fixed_height,
+                CalendarUtil.dipToPx(context, 0));
 
         if (mMinYear <= MIN_YEAR) mMinYear = MIN_YEAR;
         if (mMaxYear >= MAX_YEAR) mMaxYear = MAX_YEAR;
@@ -865,6 +879,14 @@ public class CalendarViewDelegate {
 
     int getYearViewSchemeTextColor() {
         return mYearViewSchemeTextColor;
+    }
+
+    int getMonthExtraHeight() {
+        return mMonthExtraHeight;
+    }
+
+    int getMonthViewFixedHeight() {
+        return mMonthViewFixedHeight;
     }
 
     int getMonthViewShowMode() {

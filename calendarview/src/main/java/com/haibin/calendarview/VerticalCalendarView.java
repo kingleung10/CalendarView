@@ -6,15 +6,16 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+
+import java.lang.reflect.Constructor;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
-
-import java.lang.reflect.Constructor;
-import java.util.Map;
 
 /**
  * 垂直列表排列的日历
@@ -34,6 +35,14 @@ public class VerticalCalendarView extends CalendarView {
 
     public VerticalCalendarView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (getParent() != null && getParent() instanceof CalendarLayout) {
+            monthRecyclerView.mParentLayout = (CalendarLayout) getParent();
+        }
     }
 
     @Override
@@ -81,7 +90,7 @@ public class VerticalCalendarView extends CalendarView {
 
         //月视图
         mMonthPager = new MonthViewPager(context); //提供一个占位用的视图, 防止库NPE异常
-        this.monthRecyclerView = findViewById(R.id.rv_month);
+        this.monthRecyclerView = findViewById(R.id.vp_month);
         monthRecyclerView.verticalMonthItemLayoutId = verticalMonthItemLayoutId;
         //this.mMonthPager.mWeekPager = mWeekPager;
         //this.mMonthPager.mWeekBar = mWeekBar;
@@ -89,6 +98,12 @@ public class VerticalCalendarView extends CalendarView {
         LayoutParams params = (LayoutParams) this.monthRecyclerView.getLayoutParams();
         params.setMargins(0, mDelegate.getWeekBarHeight() + CalendarUtil.dipToPx(context, 1), 0, 0);
         mWeekPager.setLayoutParams(params);
+
+        // 自然滚动模式高度固定情况
+        if (mDelegate.getMonthViewFixedHeight() > 0) {
+            params.height = mDelegate.getMonthViewFixedHeight();
+            monthRecyclerView.setLayoutParams(params);
+        }
 
         //年视图
         mYearViewPager = findViewById(R.id.selectLayout);
@@ -300,5 +315,10 @@ public class VerticalCalendarView extends CalendarView {
     public void setMonthView(Class<?> cls) {
         super.setMonthView(cls);
         monthRecyclerView.updateMonthViewClass();
+    }
+
+    @Override
+    public View getMonthView() {
+        return monthRecyclerView;
     }
 }
