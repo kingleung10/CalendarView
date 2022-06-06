@@ -22,12 +22,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.reflect.Constructor;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import java.lang.reflect.Constructor;
-import java.util.List;
 
 /**
  * 周视图滑动ViewPager，需要动态固定高度
@@ -94,14 +94,17 @@ public final class WeekViewPager extends ViewPager {
                     isUsingScrollToCalendar = false;
                     return;
                 }
-                BaseWeekView view = findViewWithTag(position);
-                if (view != null) {
-                    view.performClickCalendar(mDelegate.getSelectMode() != CalendarViewDelegate.SELECT_MODE_DEFAULT ?
-                            mDelegate.mIndexCalendar : mDelegate.mSelectedCalendar, !isUsingScrollToCalendar);
-                    if (mDelegate.mWeekChangeListener != null) {
-                        mDelegate.mWeekChangeListener.onWeekChange(getCurrentWeekCalendars());
+                if (mDelegate.isWeekViewDefaultSelect()) {
+                    BaseWeekView view = findViewWithTag(position);
+                    if (view != null) {
+                        view.performClickCalendar(mDelegate.getSelectMode() != CalendarViewDelegate.SELECT_MODE_DEFAULT ?
+                                mDelegate.mIndexCalendar : mDelegate.mSelectedCalendar, !isUsingScrollToCalendar);
+                        if (mDelegate.mWeekChangeListener != null) {
+                            mDelegate.mWeekChangeListener.onWeekChange(getCurrentWeekCalendars());
+                        }
                     }
                 }
+
                 isUsingScrollToCalendar = false;
             }
 

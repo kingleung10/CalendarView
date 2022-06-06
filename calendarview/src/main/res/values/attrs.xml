@@ -18,6 +18,7 @@
         <attr name="year_view" format="string" /> <!--完全自定义年视图-->
         <attr name="week_bar_height" format="dimension" /> <!--星期栏的高度-->
         <attr name="week_bar_view" format="string" /> <!--如果需要的话使用自定义星期栏-->
+        <attr name="week_view_default_select" format="boolean" /> <!--周视图滑动时默认选中-->
 
         <attr name="scheme_text" format="string" />
         <attr name="day_text_size" format="dimension" />

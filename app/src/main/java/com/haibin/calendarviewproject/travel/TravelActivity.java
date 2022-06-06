@@ -7,7 +7,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.haibin.calendarview.BaseMonthView;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
@@ -30,21 +29,18 @@ public class TravelActivity extends BaseActivity implements
         CalendarView.OnWeekChangeListener,
         CalendarView.OnViewChangeListener,
         CalendarView.OnCalendarInterceptListener,
-        CalendarView.OnYearViewChangeListener {
+        CalendarView.OnYearViewChangeListener,
+        CalendarView.OnTranslationYListener{
 
     TextView mTextMonthDay;
-
-    TextView mTextYear;
-
-    TextView mTextLunar;
-
-    TextView mTextCurrentDay;
 
     CalendarView mCalendarView;
 
     RelativeLayout mRelativeTool;
     private int mYear;
     CalendarLayout mCalendarLayout;
+
+    volatile boolean toScroll = true;
 
     public static void show(Context context) {
         context.startActivity(new Intent(context, TravelActivity.class));
@@ -60,8 +56,6 @@ public class TravelActivity extends BaseActivity implements
         setStatusBarDarkMode();
 
         mTextMonthDay = findViewById(R.id.tv_month_day);
-        mTextYear = findViewById(R.id.tv_year);
-        mTextLunar = findViewById(R.id.tv_lunar);
 
         mRelativeTool = findViewById(R.id.rl_tool);
         mCalendarView = findViewById(R.id.calendarView);
@@ -70,15 +64,12 @@ public class TravelActivity extends BaseActivity implements
         mCalendarView.getMonthViewPager().setOrientation(LinearLayout.VERTICAL);
 
         //mCalendarView.setRange(2018, 7, 1, 2019, 4, 28);
-        mTextCurrentDay = findViewById(R.id.tv_current_day);
         mTextMonthDay.setOnClickListener(v -> {
             if (!mCalendarLayout.isExpand()) {
                 mCalendarLayout.expand();
                 return;
             }
             mCalendarView.showYearSelectLayout(mYear);
-            mTextLunar.setVisibility(View.GONE);
-            mTextYear.setVisibility(View.GONE);
             mTextMonthDay.setText(String.valueOf(mYear));
         });
         findViewById(R.id.iv_more).setOnClickListener(new View.OnClickListener() {
@@ -94,24 +85,25 @@ public class TravelActivity extends BaseActivity implements
         mCalendarView.setOnCalendarLongClickListener(this, true);
         mCalendarView.setOnWeekChangeListener(this);
         mCalendarView.setOnYearViewChangeListener(this);
+        mCalendarView.setOnTranslationYListener(this);
 
         //设置日期拦截事件，仅适用单选模式，当前无效
         mCalendarView.setOnCalendarInterceptListener(this);
 
         mCalendarView.setOnViewChangeListener(this);
-        mTextYear.setText(String.valueOf(mCalendarView.getCurYear()));
-        mYear = mCalendarView.getCurYear();
-        mTextMonthDay.setText(mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "日");
-        mTextLunar.setText("今日");
-        mTextCurrentDay.setText(String.valueOf(mCalendarView.getCurDay()));
 
         mCalendarView.setOnVerticalItemInitialize((viewHolder, position, year, month) -> {
-            View itemView = viewHolder.itemView;
-            BaseMonthView monthView = viewHolder.monthView;
-
             TextView currentMonthView = viewHolder.itemView.findViewById(com.haibin.calendarview.R.id.current_month_view);
             if (currentMonthView != null) {
-                currentMonthView.setText(year + "年" + month + "月");
+                // 显示下个月的标题
+                Calendar c = new Calendar();
+                c.setYear(year);
+                c.setMonth(month);
+                c.setDay(1);
+                java.util.Calendar cc = c.toCalendar();
+                cc.add(java.util.Calendar.MONTH, 1);
+                Calendar calendar = Calendar.fromCalendar(cc);
+                currentMonthView.setText(calendar.getYear() + "年" + calendar.getMonth() + "月");
             }
         });
 
@@ -122,6 +114,7 @@ public class TravelActivity extends BaseActivity implements
         );
 
         mCalendarView.scrollToCurrent();
+        setTitle(mCalendarView.getSelectedCalendar());
     }
 
     @Override
@@ -173,7 +166,10 @@ public class TravelActivity extends BaseActivity implements
 
     @Override
     public void onMonthChange(int year, int month) {
-
+        Calendar c = new Calendar();
+        c.setYear(year);
+        c.setMonth(month);
+        setTitle(c);
     }
 
     @Override
@@ -188,7 +184,7 @@ public class TravelActivity extends BaseActivity implements
 
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
-
+        setTitle(calendar);
     }
 
     @Override
@@ -203,7 +199,9 @@ public class TravelActivity extends BaseActivity implements
 
     @Override
     public void onViewChange(boolean isMonthView) {
-
+        // 只要变换一次view，下一次又可以重新scrollToSelectCalendar
+        toScroll = true;
+        System.out.println("##########onViewChange " + isMonthView);
     }
 
     @Override
@@ -221,4 +219,15 @@ public class TravelActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public void onTranslationY(float percent) {
+        if (toScroll) {
+            toScroll = false;
+            mCalendarView.scrollToSelectCalendar();
+        }
+    }
+
+    private void setTitle(Calendar calendar) {
+        mTextMonthDay.setText(calendar.getYear() + "年" + calendar.getMonth() + "月");
+    }
 }

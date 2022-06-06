@@ -1970,4 +1970,19 @@ public class CalendarView extends FrameLayout {
     public void setOnVerticalItemInitialize(OnVerticalItemInitializeListener listener) {
         this.mDelegate.mVerticalItemInitializeListener = listener;
     }
+
+    /**
+     * CalendarLayout平移事件
+     */
+    public interface OnTranslationYListener {
+        /**
+         * 平移事件
+         * @param percent 平移比例 0~-1
+         */
+        void onTranslationY(float percent);
+    }
+
+    public void setOnTranslationYListener(OnTranslationYListener listener) {
+        this.mDelegate.mOnTranslationYListener = listener;
+    }
 }

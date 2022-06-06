@@ -234,6 +234,11 @@ public class CalendarViewDelegate {
     private int mWeekTextSize;
 
     /**
+     * 周视图滑动时默认选中
+     */
+    private boolean mWeekViewDefaultSelect;
+
+    /**
      * 标记的主题色和选中的主题色
      */
     protected int mSchemeThemeColor, mSelectedThemeColor;
@@ -415,6 +420,8 @@ public class CalendarViewDelegate {
 
     CalendarView.OnVerticalItemInitializeListener mVerticalItemInitializeListener;
 
+    CalendarView.OnTranslationYListener mOnTranslationYListener;
+
     /**
      * 保存选中的日期
      */
@@ -590,6 +597,7 @@ public class CalendarViewDelegate {
                 CalendarUtil.dipToPx(context, 0));
         mMonthViewFixedHeight = (int) array.getDimension(R.styleable.CalendarView_month_view_fixed_height,
                 CalendarUtil.dipToPx(context, 0));
+        mWeekViewDefaultSelect = array.getBoolean(R.styleable.CalendarView_week_view_default_select, true);
 
         if (mMinYear <= MIN_YEAR) mMinYear = MIN_YEAR;
         if (mMaxYear >= MAX_YEAR) mMaxYear = MAX_YEAR;
@@ -748,6 +756,10 @@ public class CalendarViewDelegate {
 
     int getWeekLineMargin() {
         return mWeekLineMargin;
+    }
+
+    boolean isWeekViewDefaultSelect() {
+        return mWeekViewDefaultSelect;
     }
 
     Class<?> getMonthViewClass() {

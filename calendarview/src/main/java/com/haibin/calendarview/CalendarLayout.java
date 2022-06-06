@@ -631,7 +631,13 @@ public class CalendarLayout extends LinearLayout {
      * 平移ViewPager月视图
      */
     private void translationViewPager() {
-        float percent = mContentView.getTranslationY() * 1.0f / mContentViewTranslateY;
+        float percent = mContentView.getTranslationY() / mContentViewTranslateY;
+
+        // 固定高度模式平移前先跳到已选位置，mViewPagerTranslateY也可以直接用itemHeight来计算了
+        if (mDelegate.getMonthViewFixedHeight() > 0 && mDelegate.mOnTranslationYListener != null) {
+            mDelegate.mOnTranslationYListener.onTranslationY(percent);
+        }
+
         mMonthView.setTranslationY(mViewPagerTranslateY * percent);
     }
 
