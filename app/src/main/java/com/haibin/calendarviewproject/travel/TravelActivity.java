@@ -37,8 +37,10 @@ public class TravelActivity extends BaseActivity implements
     CalendarView mCalendarView;
 
     RelativeLayout mRelativeTool;
-    private int mYear;
     CalendarLayout mCalendarLayout;
+
+    private Calendar mCalendar;
+    private int mYear;
 
     volatile boolean toScroll = true;
 
@@ -114,7 +116,8 @@ public class TravelActivity extends BaseActivity implements
         );
 
         mCalendarView.scrollToCurrent();
-        setTitle(mCalendarView.getSelectedCalendar());
+        mCalendar = mCalendarView.getDelegate().mCurrentDate;
+        setTitle();
     }
 
     @Override
@@ -166,15 +169,34 @@ public class TravelActivity extends BaseActivity implements
 
     @Override
     public void onMonthChange(int year, int month) {
-        Calendar c = new Calendar();
-        c.setYear(year);
-        c.setMonth(month);
-        setTitle(c);
+        mCalendar = new Calendar();
+        mCalendar.setYear(year);
+        mCalendar.setMonth(month);
+        setTitle();
     }
 
     @Override
     public void onWeekChange(List<Calendar> weekCalendars) {
-
+        if (weekCalendars != null && weekCalendars.size() > 0) {
+            boolean allnot = true;
+            Calendar c = null;
+            for (Calendar calendar : weekCalendars) {
+                if (mCalendar != null) {
+                    if (mCalendar.getMonth() == calendar.getMonth()) {
+                        allnot = false;
+                        break;
+                    }
+                    else {
+                        c = calendar;
+                    }
+                }
+            }
+            if (allnot && c != null) {
+                mCalendar.setYear(c.getYear());
+                mCalendar.setMonth(c.getMonth());
+                setTitle();
+            }
+        }
     }
 
     @Override
@@ -184,7 +206,8 @@ public class TravelActivity extends BaseActivity implements
 
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
-        setTitle(calendar);
+        mCalendar = calendar;
+        setTitle();
     }
 
     @Override
@@ -201,7 +224,6 @@ public class TravelActivity extends BaseActivity implements
     public void onViewChange(boolean isMonthView) {
         // 只要变换一次view，下一次又可以重新scrollToSelectCalendar
         toScroll = true;
-        System.out.println("##########onViewChange " + isMonthView);
     }
 
     @Override
@@ -227,7 +249,9 @@ public class TravelActivity extends BaseActivity implements
         }
     }
 
-    private void setTitle(Calendar calendar) {
-        mTextMonthDay.setText(calendar.getYear() + "年" + calendar.getMonth() + "月");
+    private void setTitle() {
+        if (mCalendar != null) {
+            mTextMonthDay.setText(mCalendar.getYear() + "年" + mCalendar.getMonth() + "月");
+        }
     }
 }

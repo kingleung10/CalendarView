@@ -30,6 +30,8 @@ public class VerticalMonthRecyclerView extends RecyclerView {
     protected int mMonthCount;
     protected CalendarLayout mParentLayout;
 
+    protected volatile int mLastFirstVisibleItemPosition = -1;
+
     /**
      * RecyclerView item的布局id
      */
@@ -56,6 +58,29 @@ public class VerticalMonthRecyclerView extends RecyclerView {
         if (isInEditMode()) {
             setup(new CalendarViewDelegate(context, null));
         }
+
+        addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (recyclerView.getLayoutManager() instanceof  LinearLayoutManager) {
+                    int firstVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                            .findFirstVisibleItemPosition();
+                    if (firstVisibleItemPosition != -1
+                            && firstVisibleItemPosition != mLastFirstVisibleItemPosition
+                            && mDelegate.mMonthChangeListener != null) {
+                        mLastFirstVisibleItemPosition = firstVisibleItemPosition;
+                        ViewHolder vh = findViewHolderForAdapterPosition(firstVisibleItemPosition);
+                        if (vh != null && vh instanceof VerticalMonthViewHolder) {
+                            VerticalMonthViewHolder vmvh = (VerticalMonthViewHolder) vh;
+                            if (vmvh.monthView != null) {
+                                mDelegate.mMonthChangeListener.onMonthChange(vmvh.monthView.mYear, vmvh.monthView.mMonth);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**

@@ -94,14 +94,15 @@ public final class WeekViewPager extends ViewPager {
                     isUsingScrollToCalendar = false;
                     return;
                 }
-                if (mDelegate.isWeekViewDefaultSelect()) {
-                    BaseWeekView view = findViewWithTag(position);
-                    if (view != null) {
+                BaseWeekView view = findViewWithTag(position);
+                if (view != null) {
+
+                    if (mDelegate.isWeekViewDefaultSelect()) {
                         view.performClickCalendar(mDelegate.getSelectMode() != CalendarViewDelegate.SELECT_MODE_DEFAULT ?
                                 mDelegate.mIndexCalendar : mDelegate.mSelectedCalendar, !isUsingScrollToCalendar);
-                        if (mDelegate.mWeekChangeListener != null) {
-                            mDelegate.mWeekChangeListener.onWeekChange(getCurrentWeekCalendars());
-                        }
+                    }
+                    if (mDelegate.mWeekChangeListener != null) {
+                        mDelegate.mWeekChangeListener.onWeekChange(view.mItems);
                     }
                 }
 
