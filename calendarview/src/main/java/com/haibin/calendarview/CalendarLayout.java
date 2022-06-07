@@ -282,6 +282,17 @@ public class CalendarLayout extends LinearLayout {
     }
 
     /**
+     * 重设日历
+     * @param calendarView
+     */
+    public void reset(CalendarView calendarView) {
+        this.mCalendarView = calendarView;
+        this.mMonthView = calendarView.getMonthView();
+        this.mWeekPager = calendarView.getWeekViewPager();
+        setup(calendarView.getDelegate());
+    }
+
+    /**
      * 隐藏日历
      */
     public void hideCalendarView() {
@@ -848,12 +859,7 @@ public class CalendarLayout extends LinearLayout {
             if (mDelegate.mViewChangeListener == null) {
                 return;
             }
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    mDelegate.mViewChangeListener.onViewChange(true);
-                }
-            });
+            post(() -> mDelegate.mViewChangeListener.onViewChange(true));
         }
     }
 
