@@ -26,7 +26,7 @@
     app:year_view_month_text_size="20sp"
     app:year_view_scheme_color="#f17706"
     app:month_extra_height="36dp"
-    app:month_view_fixed_height="380dp"
+    app:month_view_fixed_height="320dp"
     app:week_view_default_select="false"
     tools:vertical_month_item_layout_id="@layout/layout_vertical_month"
     android:visibility="gone"

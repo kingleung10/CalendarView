@@ -80,7 +80,10 @@ public class TravelActivity extends BaseActivity implements
             mCalendarView.showYearSelectLayout(mCalendar.getYear());
         });
         findViewById(R.id.iv_more).setOnClickListener(v -> {
+
             if (isMulti) {
+
+                updateMultiCalendarHeight(true);
                 mCalendarView.setVisibility(View.VISIBLE);
                 mMultiCalendarView.setVisibility(View.GONE);
 
@@ -93,11 +96,12 @@ public class TravelActivity extends BaseActivity implements
                     initMultiCalendarView();
                 }
 
+                updateMultiCalendarHeight(false);
+                mMultiCalendarView.clearSelectRange();
                 mCalendarView.setVisibility(View.GONE);
                 mMultiCalendarView.setVisibility(View.VISIBLE);
                 mCalendarLayout.reset(mMultiCalendarView, true);
-                updateMultiCalendarHeight(mMultiCalendarView.getDelegate().mSelectedStartRangeCalendar != null
-                    && mMultiCalendarView.getDelegate().mSelectedEndRangeCalendar != null);
+
             }
             isMulti = !isMulti;
 
@@ -235,6 +239,7 @@ public class TravelActivity extends BaseActivity implements
                 delegate.setMonthViewFixedHeight(dipToPx(this, 380));
             }
             mCalendarLayout.reset(mMultiCalendarView, false);
+            mCalendarLayout.updateMonthViewHeight(260);
             mCalendarLayout.freezeContent(!selected);
         }
 

@@ -99,6 +99,12 @@ public class VerticalCalendarView extends CalendarView {
         params.setMargins(0, mDelegate.getWeekBarHeight() + CalendarUtil.dipToPx(context, 1), 0, 0);
         mWeekPager.setLayoutParams(params);
 
+        // 自然滚动模式高度固定情况
+        if (mDelegate.getMonthViewFixedHeight() > 0) {
+            params.height = mDelegate.getMonthViewFixedHeight();
+            monthRecyclerView.setLayoutParams(params);
+        }
+
         //年视图
         mYearViewPager = findViewById(R.id.selectLayout);
         mYearViewPager.setPadding(mDelegate.getYearViewPaddingLeft(), 0, mDelegate.getYearViewPaddingRight(), 0);
@@ -207,17 +213,6 @@ public class VerticalCalendarView extends CalendarView {
         mYearViewPager.setup(mDelegate);
         mWeekPager.updateSelected(mDelegate.createCurrentDate(), false);
 
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        // 自然滚动模式高度固定情况
-        if (mDelegate.getMonthViewFixedHeight() > 0) {
-            LayoutParams params = (LayoutParams) this.monthRecyclerView.getLayoutParams();
-            params.height = mDelegate.getMonthViewFixedHeight();
-            monthRecyclerView.setLayoutParams(params);
-        }
     }
 
     @Override

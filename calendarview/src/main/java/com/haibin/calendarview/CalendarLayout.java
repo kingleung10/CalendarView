@@ -138,6 +138,11 @@ public class CalendarLayout extends LinearLayout {
      */
     private int mGestureMode;
 
+    /**
+     * 初始化时的手势模式
+     */
+    private int mGestureModeInit;
+
 
     private int mCalendarShowMode;
 
@@ -172,6 +177,7 @@ public class CalendarLayout extends LinearLayout {
         mDefaultStatus = array.getInt(R.styleable.CalendarLayout_default_status, STATUS_EXPAND);
         mCalendarShowMode = array.getInt(R.styleable.CalendarLayout_calendar_show_mode, CALENDAR_SHOW_MODE_BOTH_MONTH_WEEK_VIEW);
         mGestureMode = array.getInt(R.styleable.CalendarLayout_gesture_mode, GESTURE_MODE_DEFAULT);
+        mGestureModeInit = mGestureMode;
         array.recycle();
         mVelocityTracker = VelocityTracker.obtain();
         final ViewConfiguration configuration = ViewConfiguration.get(context);
@@ -292,16 +298,12 @@ public class CalendarLayout extends LinearLayout {
             this.mMonthView = calendarView.getMonthView();
             this.mWeekPager = calendarView.getWeekViewPager();
         }
+        mGestureMode = mGestureModeInit;
         setup(calendarView.getDelegate());
         requestLayout();
     }
 
     public void freezeContent(boolean freeze) {
-//        if (freeze) {
-//            mContentViewTranslateY = 0;
-//        } else {
-//            updateContentViewTranslateY();
-//        }
         if (freeze) {
             mGestureMode = GESTURE_MODE_ONLY_CALENDAR;
         }
@@ -476,18 +478,6 @@ public class CalendarLayout extends LinearLayout {
         }
         final int action = ev.getAction();
         float y = ev.getY();
-        float x = ev.getX();
-
-        View monthViewPager = mCalendarView.getMonthView();
-        if (!isWeekView) {
-            if (x < monthViewPager.getLeft() || x > monthViewPager.getRight() ||
-                    y < monthViewPager.getTop() || y > monthViewPager.getBottom()) {
-                if (mGestureMode == GESTURE_MODE_ONLY_CALENDAR) {
-                    return false;
-                }
-            }
-        }
-
         if (action == MotionEvent.ACTION_MOVE) {
             float dy = y - mLastY;
             /*
@@ -753,6 +743,25 @@ public class CalendarLayout extends LinearLayout {
         return expand(240);
     }
 
+    /**
+     * 改变月视图高度，必须是fixedHeight时才行
+     * @param duration
+     */
+    public void updateMonthViewHeight(int duration) {
+        if (mDelegate.getMonthViewFixedHeight() > 0 && mMonthView != null) {
+            ViewGroup.LayoutParams lp = mMonthView.getLayoutParams();
+
+            ValueAnimator va = ValueAnimator.ofInt(lp.height, mDelegate.getMonthViewFixedHeight())
+                            .setDuration(duration);
+            va.addUpdateListener(animation -> {
+                int value = (int) animation.getAnimatedValue();
+                ViewGroup.LayoutParams lp1 = mMonthView.getLayoutParams();
+                lp1.height = value;
+                mMonthView.setLayoutParams(lp1);
+            });
+            va.start();
+        }
+    }
 
     /**
      * 展开
