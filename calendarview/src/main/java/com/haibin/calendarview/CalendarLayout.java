@@ -123,10 +123,10 @@ public class CalendarLayout extends LinearLayout {
      */
     private static final int GESTURE_MODE_DEFAULT = 0;
 
-//       /**
-    //     * 仅日历有效
-    //     */
-//    private static final int GESTURE_MODE_ONLY_CALENDAR = 1;
+    /**
+     * 仅日历有效
+     */
+    private static final int GESTURE_MODE_ONLY_CALENDAR = 1;
 
     /**
      * 禁用手势
@@ -284,12 +284,30 @@ public class CalendarLayout extends LinearLayout {
     /**
      * 重设日历
      * @param calendarView
+     * @param resetView
      */
-    public void reset(CalendarView calendarView) {
-        this.mCalendarView = calendarView;
-        this.mMonthView = calendarView.getMonthView();
-        this.mWeekPager = calendarView.getWeekViewPager();
+    public void reset(CalendarView calendarView, boolean resetView) {
+        if (resetView) {
+            this.mCalendarView = calendarView;
+            this.mMonthView = calendarView.getMonthView();
+            this.mWeekPager = calendarView.getWeekViewPager();
+        }
         setup(calendarView.getDelegate());
+        requestLayout();
+    }
+
+    public void freezeContent(boolean freeze) {
+//        if (freeze) {
+//            mContentViewTranslateY = 0;
+//        } else {
+//            updateContentViewTranslateY();
+//        }
+        if (freeze) {
+            mGestureMode = GESTURE_MODE_ONLY_CALENDAR;
+        }
+        else {
+            mGestureMode = GESTURE_MODE_DEFAULT;
+        }
     }
 
     /**
@@ -458,6 +476,18 @@ public class CalendarLayout extends LinearLayout {
         }
         final int action = ev.getAction();
         float y = ev.getY();
+        float x = ev.getX();
+
+        View monthViewPager = mCalendarView.getMonthView();
+        if (!isWeekView) {
+            if (x < monthViewPager.getLeft() || x > monthViewPager.getRight() ||
+                    y < monthViewPager.getTop() || y > monthViewPager.getBottom()) {
+                if (mGestureMode == GESTURE_MODE_ONLY_CALENDAR) {
+                    return false;
+                }
+            }
+        }
+
         if (action == MotionEvent.ACTION_MOVE) {
             float dy = y - mLastY;
             /*
@@ -483,6 +513,7 @@ public class CalendarLayout extends LinearLayout {
         if (mGestureMode == GESTURE_MODE_DISABLED) {
             return false;
         }
+
         if (mYearView == null ||
                 mCalendarView == null || mCalendarView.getVisibility() == GONE ||
                 mContentView == null ||
@@ -503,10 +534,15 @@ public class CalendarLayout extends LinearLayout {
         float x = ev.getX();
 
         View monthViewPager = mCalendarView.getMonthView();
-        if ( !isWeekView) {
+        if (!isWeekView) {
             if (x >= monthViewPager.getLeft() && x <= monthViewPager.getRight() &&
                     y >= monthViewPager.getTop() && y <= monthViewPager.getBottom()) {
                 return super.onInterceptTouchEvent(ev);
+            }
+            else {
+                if (mGestureMode == GESTURE_MODE_ONLY_CALENDAR) {
+                    return false;
+                }
             }
         }
 

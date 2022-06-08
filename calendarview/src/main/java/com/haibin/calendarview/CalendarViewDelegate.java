@@ -905,6 +905,10 @@ public class CalendarViewDelegate {
         return mMonthViewShowMode;
     }
 
+    public void setMonthViewFixedHeight(int fixedHeight) {
+        this.mMonthViewFixedHeight = fixedHeight;
+    }
+
     void setMonthViewShowMode(int monthViewShowMode) {
         this.mMonthViewShowMode = monthViewShowMode;
     }

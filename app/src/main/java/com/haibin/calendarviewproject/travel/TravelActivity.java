@@ -4,19 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewStub;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
+import com.haibin.calendarview.CalendarViewDelegate;
 import com.haibin.calendarviewproject.R;
 import com.haibin.calendarviewproject.base.activity.BaseActivity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.core.widget.NestedScrollView;
 
 /**
  * @author kingleung
@@ -31,18 +33,17 @@ public class TravelActivity extends BaseActivity implements
         CalendarView.OnViewChangeListener,
         CalendarView.OnCalendarInterceptListener,
         CalendarView.OnYearViewChangeListener,
-        CalendarView.OnTranslationYListener{
+        CalendarView.OnTranslationYListener,
+        CalendarView.OnCalendarRangeSelectListener{
 
     TextView mTextMonthDay;
 
     CalendarView mCalendarView;
     CalendarView mMultiCalendarView;
+    NestedScrollView mScrollView;
 
     RelativeLayout mRelativeTool;
     CalendarLayout mCalendarLayout;
-
-    private ImageView mTodayView;
-    private ImageView mMoreView;
 
     private Calendar mCalendar;
 
@@ -68,9 +69,7 @@ public class TravelActivity extends BaseActivity implements
         mRelativeTool = findViewById(R.id.rl_tool);
         mCalendarView = findViewById(R.id.calendarView);
         mMultiCalendarView = findViewById(R.id.multiCalendarView);
-
-        mTodayView = findViewById(R.id.iv_today);
-        mMoreView = findViewById(R.id.iv_more);
+        mScrollView = findViewById(R.id.nestedScrollView);
 
         //mCalendarView.setRange(2018, 7, 1, 2019, 4, 28);
         mTextMonthDay.setOnClickListener(v -> {
@@ -85,7 +84,7 @@ public class TravelActivity extends BaseActivity implements
                 mCalendarView.setVisibility(View.VISIBLE);
                 mMultiCalendarView.setVisibility(View.GONE);
 
-                mCalendarLayout.reset(mCalendarView);
+                mCalendarLayout.reset(mCalendarView, true);
             }
             else {
                 if (mMultiCalendarView == null) {
@@ -96,13 +95,15 @@ public class TravelActivity extends BaseActivity implements
 
                 mCalendarView.setVisibility(View.GONE);
                 mMultiCalendarView.setVisibility(View.VISIBLE);
-                mCalendarLayout.reset(mMultiCalendarView);
+                mCalendarLayout.reset(mMultiCalendarView, true);
+                updateMultiCalendarHeight(mMultiCalendarView.getDelegate().mSelectedStartRangeCalendar != null
+                    && mMultiCalendarView.getDelegate().mSelectedEndRangeCalendar != null);
             }
             isMulti = !isMulti;
 
         });
 
-        mTodayView.setOnClickListener(v -> {
+        findViewById(R.id.iv_today).setOnClickListener(v -> {
             if (!isMulti) {
                 if (isMonthView) {
                     mCalendarView.scrollToCurrent();
@@ -159,7 +160,7 @@ public class TravelActivity extends BaseActivity implements
         mCalendar = mCalendarView.getDelegate().mCurrentDate;
         setTitle();
 
-        mCalendarLayout.reset(mCalendarView);
+        mCalendarLayout.reset(mCalendarView, true);
     }
 
     @Override
@@ -200,6 +201,7 @@ public class TravelActivity extends BaseActivity implements
         mMultiCalendarView.setOnYearViewChangeListener(this);
         mMultiCalendarView.setOnTranslationYListener(this);
         mMultiCalendarView.setOnViewChangeListener(this);
+        mMultiCalendarView.setOnCalendarRangeSelectListener(this);
 
         mMultiCalendarView.setOnVerticalItemInitialize((viewHolder, position, year, month) -> {
             TextView currentMonthView = viewHolder.itemView.findViewById(com.haibin.calendarview.R.id.current_month_view);
@@ -221,6 +223,21 @@ public class TravelActivity extends BaseActivity implements
         );
 
         mMultiCalendarView.scrollToCurrent();
+    }
+
+    private void updateMultiCalendarHeight(boolean selected) {
+        if (mMultiCalendarView != null) {
+            CalendarViewDelegate delegate = mMultiCalendarView.getDelegate();
+            if (selected) {
+                delegate.setMonthViewFixedHeight(dipToPx(this, 320));
+            }
+            else {
+                delegate.setMonthViewFixedHeight(dipToPx(this, 380));
+            }
+            mCalendarLayout.reset(mMultiCalendarView, false);
+            mCalendarLayout.freezeContent(!selected);
+        }
+
     }
 
     private Calendar getSchemeCalendar(int year, int month, int day, int color, String text) {
@@ -315,6 +332,31 @@ public class TravelActivity extends BaseActivity implements
     public void onCalendarInterceptClick(Calendar calendar, boolean isClick) {
 
     }
+    
+    @Override
+    public void onCalendarSelectOutOfRange(Calendar calendar) {
+        
+    }
+
+    @Override
+    public void onSelectOutOfRange(Calendar calendar, boolean isOutOfMinRange) {
+
+    }
+
+    @Override
+    public void onCalendarRangeSelect(Calendar calendar, boolean isEnd) {
+        if (isEnd) {
+            updateMultiCalendarHeight(true);
+        }
+        else {
+            updateMultiCalendarHeight(false);
+            if (!isMonthView) {
+                if (!mCalendarLayout.isExpand()) {
+                    mCalendarLayout.expand();
+                }
+            }
+        }
+    }
 
     @Override
     public void onTranslationY(float percent) {
@@ -333,5 +375,10 @@ public class TravelActivity extends BaseActivity implements
         if (mCalendar != null) {
             mTextMonthDay.setText(mCalendar.getYear() + "年" + mCalendar.getMonth() + "月");
         }
+    }
+
+    static int dipToPx(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 }
